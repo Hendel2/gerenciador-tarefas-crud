@@ -1,0 +1,8 @@
+# O log de e-mails do modo de desenvolvimento fica aqui — nunca deve ser acessível pelo navegador.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

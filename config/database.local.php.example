@@ -1,0 +1,10 @@
+<?php
+
+// Copie este arquivo para config/database.local.php e preencha com os dados
+// do banco da sua hospedagem. Ele sobrescreve o que está em config/database.php
+// e fica fora do Git, pra senha do banco não vazar no repositório.
+
+$host = 'sqlXXX.infinityfree.com';
+$dbname = 'epiz_XXXXXXXX_crud_tarefas';
+$user = 'epiz_XXXXXXXX';
+$pass = 'sua_senha_aqui';

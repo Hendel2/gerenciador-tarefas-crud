@@ -1,6 +1,7 @@
 <?php
 require 'config/database.php';
 require 'config/auth.php';
+require 'config/verificacao.php';
 
 if (usuarioLogado()) {
     header('Location: index.php');
@@ -28,21 +29,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $erro = 'As senhas não coincidem.';
     } else {
 
-        $stmt = $pdo->prepare('SELECT id FROM usuarios WHERE email = ?');
+        $stmt = $pdo->prepare('SELECT id, email_verificado FROM usuarios WHERE email = ?');
         $stmt->execute([$email]);
         $existe = $stmt->fetch();
 
-        if ($existe) {
+        if ($existe && $existe['email_verificado']) {
             $erro = 'Este e-mail já está cadastrado.';
         } else {
             $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 
-            $stmt = $pdo->prepare('INSERT INTO usuarios (nome, email, senha_hash) VALUES (?, ?, ?)');
-            $stmt->execute([$nome, $email, $senhaHash]);
+            if ($existe) {
+                // Cadastro que ficou pela metade (e-mail nunca confirmado): reaproveita o registro
+                $usuarioId = $existe['id'];
+                $stmt = $pdo->prepare('UPDATE usuarios SET nome = ?, senha_hash = ? WHERE id = ?');
+                $stmt->execute([$nome, $senhaHash, $usuarioId]);
+            } else {
+                $stmt = $pdo->prepare('INSERT INTO usuarios (nome, email, senha_hash, email_verificado) VALUES (?, ?, ?, 0)');
+                $stmt->execute([$nome, $email, $senhaHash]);
+                $usuarioId = $pdo->lastInsertId();
+            }
 
-            $_SESSION['usuario_id'] = $pdo->lastInsertId();
-            $_SESSION['usuario_nome'] = $nome;
-            header('Location: index.php');
+            $usuario = ['id' => $usuarioId, 'nome' => $nome, 'email' => $email];
+
+            $envio = enviarCodigoVerificacao($pdo, $usuario, 'cadastro');
+
+            iniciarVerificacaoPendente($usuario, 'cadastro');
+            $_SESSION['verificacao']['codigo_dev'] = $envio['codigo'];
+            $_SESSION['verificacao']['erro_envio'] = $envio['ok'] ? '' : $envio['erro'];
+
+            header('Location: verificar-email.php');
             exit;
         }
     }

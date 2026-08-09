@@ -1,6 +1,7 @@
 <?php
 require 'config/database.php';
 require 'config/auth.php';
+require 'config/verificacao.php';
 
 if (usuarioLogado()) {
     header('Location: index.php');
@@ -8,6 +9,12 @@ if (usuarioLogado()) {
 }
 
 $erro = '';
+
+$sucesso = '';
+if (!empty($_SESSION['flash_sucesso'])) {
+    $sucesso = $_SESSION['flash_sucesso'];
+    unset($_SESSION['flash_sucesso']);
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -17,9 +24,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($email == '' || $senha == '') {
         $erro = 'Preencha e-mail e senha.';
     } else {
-        $stmt = $pdo->prepare('SELECT id, nome, senha_hash FROM usuarios WHERE email = ?');
+        $stmt = $pdo->prepare('SELECT id, nome, email, senha_hash, email_verificado FROM usuarios WHERE email = ?');
         $stmt->execute([$email]);
         $usuario = $stmt->fetch();
+
+        if ($usuario && password_verify($senha, $usuario['senha_hash']) && !$usuario['email_verificado']) {
+            // Conta criada mas nunca confirmada: manda um código novo e volta pra tela de verificação
+            $envio = enviarCodigoVerificacao($pdo, $usuario, 'cadastro');
+
+            iniciarVerificacaoPendente($usuario, 'cadastro');
+            $_SESSION['verificacao']['codigo_dev'] = $envio['codigo'];
+            $_SESSION['verificacao']['erro_envio'] = $envio['ok'] ? '' : $envio['erro'];
+
+            header('Location: verificar-email.php');
+            exit;
+        }
 
         if ($usuario && password_verify($senha, $usuario['senha_hash'])) {
             $_SESSION['usuario_id'] = $usuario['id'];
@@ -51,6 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         <p class="auth-card__subtitulo">Entre para gerenciar suas tarefas</p>
 
+        <?php if ($sucesso != '') { ?>
+            <p class="auth-aviso"><?= htmlspecialchars($sucesso) ?></p>
+        <?php } ?>
+
         <?php if ($erro != '') { ?>
             <p class="auth-erro"><?= htmlspecialchars($erro) ?></p>
         <?php } ?>
@@ -68,6 +91,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <button type="submit" class="btn btn--primary">Entrar</button>
         </form>
+
+        <p class="auth-card__link-secundario"><a href="esqueci-senha.php">Esqueci minha senha</a></p>
 
         <p class="auth-card__rodape">Ainda não tem conta? <a href="cadastro.php">Cadastre-se</a></p>
     </div>

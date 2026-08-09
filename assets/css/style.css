@@ -538,3 +538,67 @@ body {
 .auth-card__rodape a:hover {
     text-decoration: underline;
 }
+
+/* Verificação por código (cadastro / recuperação de senha) */
+.auth-aviso {
+    background: #d1fae5;
+    color: #047857;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    margin: 0 0 16px;
+}
+
+.auth-dev {
+    background: #fef3c7;
+    color: #92400e;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    margin: 0 0 16px;
+}
+
+.auth-codigo {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 10px;
+    text-indent: 10px;
+}
+
+.auth-form-secundario {
+    text-align: center;
+    margin-top: 12px;
+}
+
+.auth-link-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    cursor: pointer;
+}
+
+.auth-link-btn:hover {
+    text-decoration: underline;
+}
+
+.auth-card__link-secundario {
+    text-align: center;
+    font-size: 0.85rem;
+    margin: 14px 0 0;
+}
+
+.auth-card__link-secundario a {
+    color: var(--primary-dark);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-card__link-secundario a:hover {
+    text-decoration: underline;
+}

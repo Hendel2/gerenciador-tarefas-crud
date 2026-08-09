@@ -6,6 +6,10 @@ $user = 'root';
 $pass = '';
 $charset = 'utf8mb4';
 
+if (file_exists(__DIR__ . '/database.local.php')) {
+    require __DIR__ . '/database.local.php';
+}
+
 $dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
 
 $opcoes = [

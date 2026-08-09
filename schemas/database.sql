@@ -7,7 +7,22 @@ CREATE TABLE IF NOT EXISTS usuarios (
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
     senha_hash VARCHAR(255) NOT NULL,
+    email_verificado TINYINT(1) NOT NULL DEFAULT 0,
     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- Códigos de 6 dígitos enviados por e-mail (confirmação de cadastro e recuperação de senha)
+CREATE TABLE IF NOT EXISTS codigos_verificacao (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    tipo ENUM('cadastro', 'recuperacao') NOT NULL,
+    codigo_hash VARCHAR(255) NOT NULL,
+    tentativas TINYINT NOT NULL DEFAULT 0,
+    usado TINYINT(1) NOT NULL DEFAULT 0,
+    expira_em DATETIME NOT NULL,
+    criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_codigos_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    INDEX idx_codigos_usuario_tipo (usuario_id, tipo)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS tarefas (
@@ -25,8 +40,8 @@ CREATE TABLE IF NOT EXISTS tarefas (
 ) ENGINE=InnoDB;
 
 -- Usuário de demonstração (email: demo@taskflow.com / senha: demo123)
-INSERT INTO usuarios (nome, email, senha_hash) VALUES
-('Usuário Demo', 'demo@taskflow.com', '$2y$12$kppB8H3Dn6DrgGPGqBPTl.SibFJHDYTlSvoZS8Enf1u8qtY8AVXeK');
+INSERT INTO usuarios (nome, email, senha_hash, email_verificado) VALUES
+('Usuário Demo', 'demo@taskflow.com', '$2y$12$kppB8H3Dn6DrgGPGqBPTl.SibFJHDYTlSvoZS8Enf1u8qtY8AVXeK', 1);
 
 -- Dados de exemplo (vinculados ao usuário demo)
 INSERT INTO tarefas (usuario_id, titulo, descricao, categoria, prioridade, status, data_vencimento) VALUES

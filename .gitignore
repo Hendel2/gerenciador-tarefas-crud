@@ -1,0 +1,3 @@
+config/database.local.php
+config/mail.local.php
+logs/*.log
