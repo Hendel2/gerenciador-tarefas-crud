@@ -1,14 +1,7 @@
 <?php
 
-// Envio de e-mails sem biblioteca externa: um cliente SMTP simples,
-// com fallback pra função mail() do PHP e pro modo de log (desenvolvimento).
-
 require_once __DIR__ . '/mail.php';
 
-/**
- * Envia um e-mail em HTML.
- * Retorna ['ok' => bool, 'erro' => string].
- */
 function enviarEmail($paraEmail, $paraNome, $assunto, $corpoHtml, $corpoTexto) {
     global $mailConfig;
 
@@ -25,9 +18,6 @@ function enviarEmail($paraEmail, $paraNome, $assunto, $corpoHtml, $corpoTexto) {
     return registrarEmailNoLog($paraEmail, $assunto, $corpoTexto);
 }
 
-/**
- * Modo desenvolvimento: grava o e-mail em logs/emails.log em vez de enviar.
- */
 function registrarEmailNoLog($paraEmail, $assunto, $corpoTexto) {
     global $mailConfig;
 
@@ -51,9 +41,6 @@ function registrarEmailNoLog($paraEmail, $assunto, $corpoTexto) {
     return ['ok' => true, 'erro' => ''];
 }
 
-/**
- * Envio pela função mail() do PHP (depende do servidor estar configurado).
- */
 function enviarEmailFuncaoMail($paraEmail, $paraNome, $assunto, $corpoHtml) {
     global $mailConfig;
 
@@ -72,9 +59,6 @@ function enviarEmailFuncaoMail($paraEmail, $paraNome, $assunto, $corpoHtml) {
     return ['ok' => false, 'erro' => 'A função mail() do PHP não conseguiu enviar o e-mail.'];
 }
 
-/**
- * Envio por SMTP (com STARTTLS ou SSL) e autenticação AUTH LOGIN.
- */
 function enviarEmailSmtp($paraEmail, $paraNome, $assunto, $corpoHtml, $corpoTexto) {
     global $mailConfig;
 
@@ -130,7 +114,6 @@ function enviarEmailSmtp($paraEmail, $paraNome, $assunto, $corpoHtml, $corpoText
             return ['ok' => false, 'erro' => 'Falha ao iniciar a criptografia TLS com o servidor SMTP.'];
         }
 
-        // Depois do STARTTLS o EHLO precisa ser repetido
         $passo = enviarComandoSmtp($socket, "EHLO $dominio", '2');
         if (!$passo['ok']) {
             fclose($socket);
@@ -199,7 +182,6 @@ function enviarComandoSmtp($socket, $comando, $codigoEsperado) {
     $resposta = lerRespostaSmtp($socket);
 
     if (substr($resposta, 0, 1) != $codigoEsperado) {
-        // Não expõe a linha do comando (pode conter credenciais em base64)
         return ['ok' => false, 'erro' => 'Erro na conversa com o servidor SMTP: ' . trim($resposta)];
     }
 
@@ -211,8 +193,6 @@ function lerRespostaSmtp($socket) {
 
     while ($linha = fgets($socket, 515)) {
         $resposta .= $linha;
-        // Em respostas de várias linhas o código vem com "-" (ex.: "250-"),
-        // a última linha vem com espaço ("250 ").
         if (strlen($linha) < 4 || substr($linha, 3, 1) == ' ') {
             break;
         }
@@ -251,7 +231,6 @@ function montarMensagemSmtp($paraEmail, $paraNome, $assunto, $corpoHtml, $corpoT
 
     $mensagem = implode("\r\n", $cabecalhos) . "\r\n\r\n" . $corpo;
 
-    // Protege contra linhas que comecem com "." (fim de dados no SMTP)
     return str_replace("\r\n.", "\r\n..", $mensagem);
 }
 

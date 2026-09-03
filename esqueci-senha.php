@@ -32,8 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['verificacao']['codigo_dev'] = $envio['codigo'];
             $_SESSION['verificacao']['erro_envio'] = $envio['ok'] ? '' : $envio['erro'];
         } else {
-            // E-mail não cadastrado: segue pra mesma tela, sem revelar que a conta não existe.
-            // O id 0 nunca casa com nenhum código, então nenhuma senha pode ser trocada por aqui.
             iniciarVerificacaoPendente(['id' => 0, 'nome' => '', 'email' => $email], 'recuperacao');
         }
 

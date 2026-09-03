@@ -64,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// A mensagem de erro de envio só aparece uma vez
 $_SESSION['verificacao']['erro_envio'] = '';
 ?>
 <!DOCTYPE html>

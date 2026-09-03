@@ -39,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 
             if ($existe) {
-                // Cadastro que ficou pela metade (e-mail nunca confirmado): reaproveita o registro
                 $usuarioId = $existe['id'];
                 $stmt = $pdo->prepare('UPDATE usuarios SET nome = ?, senha_hash = ? WHERE id = ?');
                 $stmt->execute([$nome, $senhaHash, $usuarioId]);

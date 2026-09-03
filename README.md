@@ -136,22 +136,3 @@ Se o envio falhar, a mensagem de erro exata do servidor SMTP aparece na própria
 
 O envio SMTP é feito por um cliente próprio em `config/mailer.php` (com STARTTLS/SSL e `AUTH LOGIN`), sem Composer nem PHPMailer — o projeto continua sem dependências externas.
 
-## Colocando no ar (hospedagem gratuita)
-
-Pra acessar o sistema de qualquer lugar (inclusive pelo celular), dá pra usar uma hospedagem grátis com PHP + MySQL, como a [InfinityFree](https://infinityfree.net/).
-
-1. Cria a conta e a hospedagem gratuita lá, e pega os dados de acesso **FTP** e **MySQL** que eles fornecem.
-2. Sobe todos os arquivos do projeto via FTP.
-3. Importa o `schemas/database.sql` pelo phpMyAdmin da hospedagem (se o banco de lá já existia, importa só o `schemas/migration_verificacao.sql`).
-4. Copia `config/database.local.php.example` pra `config/database.local.php` e preenche com o host, banco, usuário e senha que a hospedagem te deu:
-
-```php
-<?php
-$host = 'sqlXXX.infinityfree.com';
-$dbname = 'epiz_XXXXXXXX_crud_tarefas';
-$user = 'epiz_XXXXXXXX';
-$pass = 'sua_senha_aqui';
-```
-
-O `config/database.php` carrega esse arquivo automaticamente se ele existir, sobrescrevendo os valores padrão (`root` sem senha) usados no XAMPP local. Esse arquivo fica de fora do Git (`.gitignore`) justamente pra não vazar a senha do banco de produção no repositório público — cada ambiente (seu PC e a hospedagem) tem o seu próprio.
-

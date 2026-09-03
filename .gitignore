@@ -1,3 +1,42 @@
-config/database.local.php
-config/mail.local.php
-logs/*.log
+# Configurações locais com credenciais (nunca versionar)
+config/*.local.php
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/*
+!logs/.htaccess
+*.log
+
+# Dependências
+/vendor/
+/node_modules/
+
+# Editores e IDEs
+.vscode/
+.idea/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+.claude/
+
+# Sistema operacional
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+._*
+
+# Arquivos temporários e backups
+*.bak
+*.tmp
+*.swp
+*.orig
+*~
+
+# Credenciais de FTP / deploy
+.ftpconfig
+sftp-config.json
+deploy.sh

@@ -79,7 +79,6 @@ body {
     padding: 34px 40px 60px;
 }
 
-/* Stats */
 .stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -113,7 +112,6 @@ body {
 .stat-card--andamento { border-left-color: var(--primary); }
 .stat-card--concluida { border-left-color: var(--sucesso); }
 
-/* Filtros */
 .filtros {
     display: flex;
     flex-wrap: wrap;
@@ -135,7 +133,6 @@ body {
     flex: 1 1 240px;
 }
 
-/* Lista de tarefas */
 .lista-tarefas {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -248,7 +245,6 @@ body {
     margin-top: 60px;
 }
 
-/* Botões */
 .btn {
     border: none;
     border-radius: 8px;
@@ -282,7 +278,6 @@ body {
     border: 1px solid var(--border);
 }
 
-/* Modal */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -441,7 +436,6 @@ body {
     }
 }
 
-/* Autenticação (login / cadastro) */
 .auth-body {
     display: flex;
     min-height: 100vh;
@@ -539,7 +533,6 @@ body {
     text-decoration: underline;
 }
 
-/* Verificação por código (cadastro / recuperação de senha) */
 .auth-aviso {
     background: #d1fae5;
     color: #047857;

@@ -65,14 +65,12 @@ exigirLogin();
     </section>
 
     <section class="lista-tarefas" id="listaTarefas">
-        <!-- Tarefas inseridas via JS -->
     </section>
 
     <p class="vazio" id="mensagemVazia" hidden>Nenhuma tarefa encontrada. Crie a primeira clicando em "Nova tarefa".</p>
 
 </main>
 
-<!-- Modal de criação/edição -->
 <div class="modal-overlay" id="modalOverlay" hidden>
     <div class="modal">
         <div class="modal__header">

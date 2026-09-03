@@ -1,17 +1,11 @@
 <?php
 
-// Regras dos códigos de verificação de 6 dígitos enviados por e-mail.
-
 require_once __DIR__ . '/mailer.php';
 
-define('CODIGO_VALIDADE_MINUTOS', 15);   // tempo de vida do código
-define('CODIGO_MAX_TENTATIVAS', 5);      // erros permitidos antes de invalidar
-define('CODIGO_ESPERA_REENVIO', 60);     // segundos entre um envio e outro
+define('CODIGO_VALIDADE_MINUTOS', 15);
+define('CODIGO_MAX_TENTATIVAS', 5);
+define('CODIGO_ESPERA_REENVIO', 60);
 
-/**
- * Gera um código novo, invalida os anteriores do mesmo tipo e devolve o código em texto puro.
- * No banco fica só o hash — nem quem tem acesso ao banco consegue ler o código.
- */
 function criarCodigoVerificacao($pdo, $usuarioId, $tipo) {
     $stmt = $pdo->prepare('UPDATE codigos_verificacao SET usado = 1 WHERE usuario_id = ? AND tipo = ? AND usado = 0');
     $stmt->execute([$usuarioId, $tipo]);
@@ -27,9 +21,6 @@ function criarCodigoVerificacao($pdo, $usuarioId, $tipo) {
     return $codigo;
 }
 
-/**
- * Quantos segundos ainda faltam pra poder pedir um código novo (0 = pode reenviar agora).
- */
 function segundosParaReenvio($pdo, $usuarioId, $tipo) {
     $stmt = $pdo->prepare(
         'SELECT TIMESTAMPDIFF(SECOND, criado_em, NOW()) AS segundos
@@ -48,9 +39,6 @@ function segundosParaReenvio($pdo, $usuarioId, $tipo) {
     return $falta > 0 ? $falta : 0;
 }
 
-/**
- * Confere o código digitado. Retorna ['ok' => bool, 'erro' => string].
- */
 function validarCodigoVerificacao($pdo, $usuarioId, $tipo, $codigoDigitado) {
     $codigoDigitado = preg_replace('/\D/', '', $codigoDigitado);
 
@@ -99,10 +87,6 @@ function validarCodigoVerificacao($pdo, $usuarioId, $tipo, $codigoDigitado) {
     return ['ok' => true, 'erro' => ''];
 }
 
-/**
- * Gera o código e manda por e-mail. Retorna ['ok' => bool, 'erro' => string, 'codigo' => string].
- * O 'codigo' só volta preenchido no modo de desenvolvimento (mostrar_codigo_na_tela).
- */
 function enviarCodigoVerificacao($pdo, $usuario, $tipo) {
     global $mailConfig;
 
@@ -151,9 +135,6 @@ function enviarCodigoVerificacao($pdo, $usuario, $tipo) {
     return $resultado;
 }
 
-/**
- * Guarda na sessão quem está no meio de um fluxo de verificação.
- */
 function iniciarVerificacaoPendente($usuario, $tipo) {
     $_SESSION['verificacao'] = [
         'id'          => $usuario['id'],
@@ -170,7 +151,6 @@ function verificacaoPendente($tipo) {
         return null;
     }
 
-    // Garante as chaves opcionais pra não dar aviso de índice indefinido
     return array_merge(['codigo_dev' => '', 'erro_envio' => ''], $_SESSION['verificacao']);
 }
 
@@ -178,9 +158,6 @@ function limparVerificacaoPendente() {
     unset($_SESSION['verificacao']);
 }
 
-/**
- * Esconde parte do e-mail na tela (jo***@gmail.com).
- */
 function mascararEmail($email) {
     $partes = explode('@', $email);
 

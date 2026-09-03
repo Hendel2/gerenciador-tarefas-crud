@@ -61,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else if ($senha != $confirmarSenha) {
             $erro = 'As senhas não coincidem.';
         } else if ($pendente['id'] == 0) {
-            // E-mail que não existe no banco — mensagem igual à de código errado
             $erro = 'Código incorreto ou expirado. Peça um novo código.';
         } else {
 
@@ -70,11 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($resultado['ok']) {
                 $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 
-                // Quem provou ter acesso ao e-mail também confirma a conta
                 $stmt = $pdo->prepare('UPDATE usuarios SET senha_hash = ?, email_verificado = 1 WHERE id = ?');
                 $stmt->execute([$senhaHash, $pendente['id']]);
 
-                // Derruba qualquer outro código que ainda estivesse valendo
                 $stmt = $pdo->prepare('UPDATE codigos_verificacao SET usado = 1 WHERE usuario_id = ? AND usado = 0');
                 $stmt->execute([$pendente['id']]);
 

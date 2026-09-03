@@ -29,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $usuario = $stmt->fetch();
 
         if ($usuario && password_verify($senha, $usuario['senha_hash']) && !$usuario['email_verificado']) {
-            // Conta criada mas nunca confirmada: manda um código novo e volta pra tela de verificação
             $envio = enviarCodigoVerificacao($pdo, $usuario, 'cadastro');
 
             iniciarVerificacaoPendente($usuario, 'cadastro');
